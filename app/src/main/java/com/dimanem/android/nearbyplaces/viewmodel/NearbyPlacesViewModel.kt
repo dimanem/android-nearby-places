@@ -1,6 +1,8 @@
 package com.dimanem.android.nearbyplaces.viewmodel
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.location.Location
 import com.dimanem.android.nearbyplaces.entities.Place
@@ -13,14 +15,22 @@ import javax.inject.Inject
  */
 class NearbyPlacesViewModel : ViewModel {
 
-    var places: LiveData<Resource<List<Place>>> ? = null
+    var currentLocation: MutableLiveData<Location> = MutableLiveData()
+    var nearByPlaces: LiveData<Resource<List<Place>>> ? = null
 
     @Inject
     constructor(repository: NearbyPlacesRepository) {
-        var location = Location("GPS")
-        location.latitude = 32.109333
-        location.longitude = 34.855499
+        nearByPlaces = Transformations.switchMap(currentLocation) {
+            if (it != null && it.latitude > 0 && it.longitude > 0) {
+                // TODO radius and isOpenNow shouldn't be hardcoded (use shared prefs)
+                repository.getNearbyPlaces(it, 3000, true)
+            } else {
+                MutableLiveData()
+            }
+        }
+    }
 
-        places = repository.getNearbyPlaces(location, 3000, true)
+    fun setCurrentLocation(location: Location) {
+        currentLocation.value = location
     }
 }

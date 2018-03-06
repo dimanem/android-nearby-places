@@ -17,6 +17,6 @@ interface NearbyPlacesDao {
     fun insert(items: List<Place>)
 
     // Why arg0, arg1: https://stackoverflow.com/questions/44206745/android-room-each-bind-variable-in-the-query-must-have-a-matching-method
-    @Query("SELECT * FROM places WHERE base_lat = :lat AND base_lon = :lon")
+    @Query("SELECT * FROM nearByPlaces WHERE base_lat = :lat AND base_lon = :lon")
     fun getNearbyPlaces(lat: Double, lon: Double): LiveData<List<Place>>
 }

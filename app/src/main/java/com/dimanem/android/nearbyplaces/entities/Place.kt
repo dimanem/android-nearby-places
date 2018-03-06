@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey
 /**
  * Created by dimanemets on 05/03/2018.
  */
-@Entity(tableName = "places")
+@Entity(tableName = "nearByPlaces")
 class Place() {
 
     @PrimaryKey(autoGenerate = true)

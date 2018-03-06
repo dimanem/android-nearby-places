@@ -1,15 +1,18 @@
 package com.dimanem.android.nearbyplaces.view
 
-import android.arch.lifecycle.Observer
+import android.Manifest
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.support.v7.app.AppCompatActivity
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import com.dimanem.android.nearbyplaces.R
-import com.dimanem.android.nearbyplaces.entities.Place
-import com.dimanem.android.nearbyplaces.entities.Resource
-import com.dimanem.android.nearbyplaces.entities.Status
+import com.dimanem.android.nearbyplaces.view.list.NearbyPlacesListFragment
+import com.dimanem.android.nearbyplaces.view.location.LocationObserver
+import com.dimanem.android.nearbyplaces.view.location.LocationUtil
 import com.dimanem.android.nearbyplaces.viewmodel.NearbyPlacesViewModel
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
@@ -24,21 +27,59 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var locationUtil: LocationUtil
+
     var viewModel: NearbyPlacesViewModel? = null
+
+    // TODO use dependency injection
+    private lateinit var locationObserver: LocationObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NearbyPlacesViewModel::class.java)
-        viewModel?.places?.observe(this, Observer<Resource<List<Place>>> { resource ->
-            if (resource != null && resource.status == Status.SUCCESS) {
-                Timber.e("Fetched items: " + resource.data?.toString())
+
+        locationObserver = LocationObserver(application, lifecycle, locationUtil, object : LocationObserver.Callback {
+            override fun onLocationChanged(location: Location) {
+                viewModel?.setCurrentLocation(location)
             }
         })
+
+        requestLocationPermissionsIfNeeded()
+
+        showListFragment()
     }
 
     override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
         return dispatchingAndroidInjector
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == 1) {
+            for (grantResult in grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    Timber.e("Location permission not granted!")
+                    return
+                }
+
+                // Enable location manager
+                locationObserver.enable()
+            }
+        }
+    }
+
+    private fun showListFragment() {
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.container, NearbyPlacesListFragment())
+                .commit()
+    }
+
+    private fun requestLocationPermissionsIfNeeded() {
+        if (!locationUtil.isPermissionGranted()) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            return
+        }
     }
 }
