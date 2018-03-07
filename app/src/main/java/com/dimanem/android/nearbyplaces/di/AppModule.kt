@@ -2,20 +2,19 @@ package com.dimanem.android.nba.rssreader.di
 
 import android.app.Application
 import android.arch.persistence.room.Room
-import com.dimanem.android.nearbyplaces.BuildConfig
 import com.dimanem.android.nearbyplaces.repository.adapters.LiveDataCallAdapterFactory
 import com.dimanem.android.nearbyplaces.repository.api.googleplaces.GooglePlacesApi
-import com.dimanem.android.nearbyplaces.repository.db.NearbyPlacesDao
 import com.dimanem.android.nearbyplaces.repository.db.NearbyPlacesDB
+import com.dimanem.android.nearbyplaces.repository.db.NearbyPlacesDao
 import com.dimanem.android.nearbyplaces.viewmodel.di.ViewModelModule
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import dagger.Module
 import dagger.Provides
-import retrofit2.Retrofit
-import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
 /**
  * Created by dimanemets on 09/02/2018.

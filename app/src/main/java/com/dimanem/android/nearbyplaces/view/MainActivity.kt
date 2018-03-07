@@ -41,13 +41,18 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NearbyPlacesViewModel::class.java)
 
+        // Location observer
         locationObserver = LocationObserver(application, lifecycle, locationUtil, object : LocationObserver.Callback {
             override fun onLocationChanged(location: Location) {
                 viewModel?.setCurrentLocation(location)
             }
         })
-
-        requestLocationPermissionsIfNeeded()
+        if (locationUtil.isPermissionGranted()) {
+            locationObserver.enable()
+        } else {
+            requestLocationPermission()
+        }
+        lifecycle.addObserver(locationObserver)
 
         showListFragment()
     }
@@ -76,10 +81,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
                 .commit()
     }
 
-    private fun requestLocationPermissionsIfNeeded() {
-        if (!locationUtil.isPermissionGranted()) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            return
-        }
+    private fun requestLocationPermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
     }
 }

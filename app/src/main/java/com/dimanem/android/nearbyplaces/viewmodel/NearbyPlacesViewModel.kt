@@ -23,7 +23,7 @@ class NearbyPlacesViewModel : ViewModel {
         nearByPlaces = Transformations.switchMap(currentLocation) {
             if (it != null && it.latitude > 0 && it.longitude > 0) {
                 // TODO radius and isOpenNow shouldn't be hardcoded (use shared prefs)
-                repository.getNearbyPlaces(it, 3000, true)
+                repository.getNearbyPlaces(it, 2000, false)
             } else {
                 MutableLiveData()
             }

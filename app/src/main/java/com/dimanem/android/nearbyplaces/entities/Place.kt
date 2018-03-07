@@ -23,16 +23,22 @@ class Place() {
     var lat: Double? = 0.0
     @ColumnInfo(name = "lon")
     var lon: Double? = 0.0
+
+    var name: String? = null
     var icon: String? = null
     var rating: Double? = null
     var address: String? = null
 
     @Ignore
-    constructor(baseLat: Double, baseLon: Double, lat: Double?, lon: Double?, icon: String?, rating: Double?, address: String?): this() {
+    constructor(baseLat: Double, baseLon: Double,
+                lat: Double?, lon: Double?,
+                name: String?, icon: String?,
+                rating: Double?, address: String?): this() {
         this.baseLat = baseLat
         this.baseLon = baseLon
         this.lat = lat
         this.lon = lon
+        this.name = name
         this.icon = icon
         this.rating = rating
         this.address = address

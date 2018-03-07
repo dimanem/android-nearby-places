@@ -12,6 +12,7 @@ import com.dimanem.android.nearbyplaces.repository.db.NearbyPlacesDao
 import com.dimanem.android.nearbyplaces.repository.util.AppExecutors
 import com.dimanem.android.nearbyplaces.repository.util.NetworkBoundResource
 import com.dimanem.android.nearbyplaces.entities.Resource
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -46,6 +47,7 @@ class NearbyPlacesRepository() {
                         Place(location.latitude, location.longitude,
                                 result.geometry?.location?.lat,
                                 result.geometry?.location?.lng,
+                                result.name,
                                 result.icon,
                                 result.rating,
                                 result.vicinity) })
@@ -57,6 +59,7 @@ class NearbyPlacesRepository() {
             }
 
             override fun createCall(): LiveData<ApiResponse<GooglePlacesApiResponse>> {
+                Timber.i("Creating API call!")
                 return api.getNearbyPlaces(
                         BuildConfig.API_KEY,
                         "${location.latitude},${location.longitude}",

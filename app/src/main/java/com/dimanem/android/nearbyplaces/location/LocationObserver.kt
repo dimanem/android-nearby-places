@@ -11,7 +11,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
-import javax.inject.Inject
 import com.google.android.gms.location.LocationRequest
 
 
@@ -63,25 +62,16 @@ class LocationObserver : LifecycleObserver,
         enabled = true
         if (isLifecycleActive()) {
             connectIfNeeded()
+//            fetchLastKnownLocation()
         }
     }
 
     @SuppressLint("MissingPermission")
     override fun onConnected(p0: Bundle?) {
         if (locationUtil.isPermissionGranted()) {
-            val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
-
-            if (lastLocation != null) {
-                if (isLifecycleActive()) {
-                    callback.onLocationChanged(lastLocation)
-                }
-            }
-
-
+//            fetchLastKnownLocation()
             if (isLifecycleActive()) {
-                val locationRequest = LocationRequest.create()
-                locationRequest.priority = LocationRequest.PRIORITY_LOW_POWER
-                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
+                registerForLocationUpdates()
             }
         }
     }
@@ -96,6 +86,24 @@ class LocationObserver : LifecycleObserver,
         if (isLifecycleActive() && p0 != null) {
             callback.onLocationChanged(p0)
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun fetchLastKnownLocation() {
+        val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+
+        if (lastLocation != null) {
+            if (isLifecycleActive()) {
+                callback.onLocationChanged(lastLocation)
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun registerForLocationUpdates() {
+        val locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_LOW_POWER
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
     }
 
     private fun isLifecycleActive() = lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
