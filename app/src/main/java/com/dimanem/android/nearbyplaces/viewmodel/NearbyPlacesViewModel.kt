@@ -21,7 +21,7 @@ class NearbyPlacesViewModel : ViewModel {
     @Inject
     constructor(repository: NearbyPlacesRepository) {
         nearByPlaces = Transformations.switchMap(currentLocation) {
-            if (it != null && it.latitude > 0 && it.longitude > 0) {
+            if (it != null) {
                 // TODO radius and isOpenNow shouldn't be hardcoded (use shared prefs)
                 repository.getNearbyPlaces(it, 2000, false)
             } else {
