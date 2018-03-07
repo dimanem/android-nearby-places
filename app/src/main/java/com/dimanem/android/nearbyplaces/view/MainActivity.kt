@@ -24,8 +24,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
-
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, LocationObserver.Callback {
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
@@ -35,14 +34,14 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var locationUtil: LocationUtil
 
+    @Inject
+    lateinit var locationObserver: LocationObserver
+
     var viewModel: NearbyPlacesViewModel? = null
 
     // View Switching
     var menu: Menu? = null
     var showingMap: Boolean? = null
-
-    // TODO use dependency injection
-    private lateinit var locationObserver: LocationObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,20 +50,26 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NearbyPlacesViewModel::class.java)
 
         // Location observer
-        locationObserver = LocationObserver(application, lifecycle, locationUtil, object : LocationObserver.Callback {
-            override fun onLocationChanged(location: Location) {
-                viewModel?.setCurrentLocation(location)
-            }
-        })
         if (locationUtil.isPermissionGranted()) {
             locationObserver.enable()
         } else {
             requestLocationPermission()
         }
+
         lifecycle.addObserver(locationObserver)
 
         // Show the list first
         showListFragment()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        locationObserver.callback = this
+    }
+
+    override fun onStop() {
+        locationObserver.callback = null
+        super.onStop()
     }
 
     override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
@@ -83,6 +88,11 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
                 locationObserver.enable()
             }
         }
+    }
+
+    override fun onLocationChanged(location: Location) {
+        Timber.i("On location changed: $location")
+        viewModel?.setCurrentLocation(location)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
