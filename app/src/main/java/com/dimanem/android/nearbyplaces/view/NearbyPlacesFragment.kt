@@ -14,6 +14,7 @@ import com.dimanem.android.nearbyplaces.entities.Place
 import com.dimanem.android.nearbyplaces.entities.Resource
 import com.dimanem.android.nearbyplaces.entities.Status
 import com.dimanem.android.nearbyplaces.viewmodel.NearbyPlacesViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -37,16 +38,12 @@ abstract class NearbyPlacesFragment : Fragment(), Injectable {
             when {
                 resource?.status == Status.LOADING -> {
                     showLoading()
-                    // show loading dialog
                 }
                 resource?.status == Status.SUCCESS -> {
-                    resource?.data?.size
                     showPlaces(resource.data)
-                    // Show items
                 }
                 else -> {
                     showError(resource?.message)
-                    // Something is wrong
                 }
             }
         })
@@ -55,10 +52,14 @@ abstract class NearbyPlacesFragment : Fragment(), Injectable {
     override abstract fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View?
     abstract fun showPlaces(places: List<Place>?)
 
-    abstract fun showLoading()
+    open fun showLoading() {
+        showSnackbar("Loading...")
+    }
 
     open fun showError(error: String?) {
-        showSnackbar("Failed to load locations with error: $error")
+        val errorMsg = "Failed to load locations with error: $error"
+        Timber.e(errorMsg)
+        showSnackbar(errorMsg)
     }
 
     fun showSnackbar(text: String) {

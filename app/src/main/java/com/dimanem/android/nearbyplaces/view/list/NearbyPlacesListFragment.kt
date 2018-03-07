@@ -36,18 +36,10 @@ class NearbyPlacesListFragment : NearbyPlacesFragment() {
         return view
     }
 
-    override fun showLoading() {
-        Timber.d("Loading...")
-    }
-
     override fun showPlaces(places: List<Place>?) {
         if (places != null && !places.isEmpty()) {
             Timber.d("Showing ${places?.size} places")
             this.adapter?.setPlaces(places)
         }
-    }
-
-    override fun showError(error: String?) {
-        Timber.e("Failed to load with error: $error")
     }
 }
