@@ -1,4 +1,4 @@
-package com.dimanem.android.nba.rssreader.di
+package com.dimanem.android.nearbyplaces
 
 import android.app.Activity
 import android.app.Application

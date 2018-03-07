@@ -1,4 +1,4 @@
-package com.dimanem.android.nba.rssreader.di
+package com.dimanem.android.nearbyplaces
 
 import com.dimanem.android.nearbyplaces.view.MainActivity
 import com.dimanem.android.nearbyplaces.viewmodel.di.ViewModelModule

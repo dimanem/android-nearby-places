@@ -1,4 +1,4 @@
-package com.dimanem.android.nba.rssreader.di
+package com.dimanem.android.nearbyplaces
 
 import com.dimanem.android.nearbyplaces.view.list.NearbyPlacesListFragment
 import com.dimanem.android.nearbyplaces.view.map.NearbyPlacesMapFragment

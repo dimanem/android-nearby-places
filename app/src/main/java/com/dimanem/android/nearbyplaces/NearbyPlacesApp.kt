@@ -2,7 +2,6 @@ package com.dimanem.android.nearbyplaces
 
 import android.app.Activity
 import android.app.Application
-import com.dimanem.android.nba.rssreader.di.AppInjector
 import com.facebook.stetho.Stetho
 import com.squareup.leakcanary.LeakCanary
 import dagger.android.DispatchingAndroidInjector

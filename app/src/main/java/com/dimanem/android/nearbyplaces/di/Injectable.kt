@@ -1,4 +1,4 @@
-package com.dimanem.android.nba.rssreader.di
+package com.dimanem.android.nearbyplaces
 
 /**
  * Marks an activity / fragment injectable.

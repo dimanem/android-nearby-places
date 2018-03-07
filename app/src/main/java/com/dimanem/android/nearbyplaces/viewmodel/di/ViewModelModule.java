@@ -14,7 +14,7 @@ public abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(NearbyPlacesViewModel.class)
-    abstract ViewModel bindUserViewModel(NearbyPlacesViewModel rssViewModel);
+    abstract ViewModel bindUserViewModel(NearbyPlacesViewModel placesViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(ViewModelFactory factory);
