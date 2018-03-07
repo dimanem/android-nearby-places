@@ -1,10 +1,10 @@
 package com.dimanem.android.nearbyplaces.view
 
 import android.Manifest
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -14,7 +14,6 @@ import android.view.Menu
 import android.view.MenuItem
 import com.dimanem.android.nearbyplaces.R
 import com.dimanem.android.nearbyplaces.view.list.NearbyPlacesListFragment
-import com.dimanem.android.nearbyplaces.view.location.LocationObserver
 import com.dimanem.android.nearbyplaces.view.location.LocationUtil
 import com.dimanem.android.nearbyplaces.view.map.NearbyPlacesMapFragment
 import com.dimanem.android.nearbyplaces.viewmodel.NearbyPlacesViewModel
@@ -24,7 +23,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, LocationObserver.Callback {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
@@ -33,9 +32,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, LocationOb
 
     @Inject
     lateinit var locationUtil: LocationUtil
-
-    @Inject
-    lateinit var locationObserver: LocationObserver
 
     var viewModel: NearbyPlacesViewModel? = null
 
@@ -51,25 +47,14 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, LocationOb
 
         // Location observer
         if (locationUtil.isPermissionGranted()) {
-            locationObserver.enable()
+            viewModel?.setLocationPermissionGranted(true)
         } else {
+            viewModel?.setLocationPermissionGranted(false)
             requestLocationPermission()
         }
 
-        lifecycle.addObserver(locationObserver)
-
         // Show the list first
         showListFragment()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        locationObserver.callback = this
-    }
-
-    override fun onStop() {
-        locationObserver.callback = null
-        super.onStop()
     }
 
     override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
@@ -81,18 +66,13 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, LocationOb
             for (grantResult in grantResults) {
                 if (grantResult != PackageManager.PERMISSION_GRANTED) {
                     Timber.e("Location permission not granted!")
+                    viewModel?.setLocationPermissionGranted(false)
                     return
                 }
 
-                // Enable location manager
-                locationObserver.enable()
             }
+            viewModel?.setLocationPermissionGranted(true)
         }
-    }
-
-    override fun onLocationChanged(location: Location) {
-        Timber.i("On location changed: $location")
-        viewModel?.setCurrentLocation(location)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
