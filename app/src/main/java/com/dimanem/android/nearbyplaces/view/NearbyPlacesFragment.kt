@@ -50,10 +50,15 @@ abstract class NearbyPlacesFragment : Fragment(), Injectable {
     }
 
     override abstract fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View?
-    abstract fun showPlaces(places: List<Place>?)
+
+    open fun showPlaces(places: List<Place>?) {
+        val message = "Showing ${places?.size} places"
+        Timber.d(message)
+//        showSnackbar(message)
+    }
 
     open fun showLoading() {
-        showSnackbar("Loading...")
+        showSnackbar("Loading nearby places")
     }
 
     open fun showError(error: String?) {

@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.dimanem.android.nearbyplaces.R
+import com.dimanem.android.nearbyplaces.location.LocationLiveData
 import com.dimanem.android.nearbyplaces.view.list.NearbyPlacesListFragment
 import com.dimanem.android.nearbyplaces.view.location.LocationUtil
 import com.dimanem.android.nearbyplaces.view.map.NearbyPlacesMapFragment
@@ -35,6 +36,9 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     var viewModel: NearbyPlacesViewModel? = null
 
+    @Inject
+    lateinit var locationData: LocationLiveData
+
     // View Switching
     var menu: Menu? = null
     var showingMap: Boolean? = null
@@ -47,11 +51,14 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         // Location observer
         if (locationUtil.isPermissionGranted()) {
-            viewModel?.setLocationPermissionGranted(true)
+            locationData.setLocationPermissionGranted(true)
         } else {
-            viewModel?.setLocationPermissionGranted(false)
+            locationData.setLocationPermissionGranted(false)
             requestLocationPermission()
         }
+
+        // We want LocationData to be active while activity lives
+        locationData.observe(this, Observer { /* We don't care about the actual location */ })
 
         // Show the list first
         showListFragment()
@@ -66,12 +73,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
             for (grantResult in grantResults) {
                 if (grantResult != PackageManager.PERMISSION_GRANTED) {
                     Timber.e("Location permission not granted!")
-                    viewModel?.setLocationPermissionGranted(false)
+                    locationData.setLocationPermissionGranted(true)
                     return
                 }
 
             }
-            viewModel?.setLocationPermissionGranted(true)
+            locationData.setLocationPermissionGranted(true)
         }
     }
 

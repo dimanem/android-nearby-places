@@ -48,6 +48,7 @@ class NearbyPlacesMapFragment : NearbyPlacesFragment() {
     }
 
     override fun showPlaces(places: List<Place>?) {
+        super.showPlaces(places)
         if (this.map == null) {
             mapView?.getMapAsync({ map ->
                 setMap(map)

@@ -37,8 +37,8 @@ class NearbyPlacesListFragment : NearbyPlacesFragment() {
     }
 
     override fun showPlaces(places: List<Place>?) {
+        super.showPlaces(places)
         if (places != null && !places.isEmpty()) {
-            Timber.d("Showing ${places?.size} places")
             this.adapter?.setPlaces(places)
         }
     }
