@@ -41,10 +41,10 @@ class NearbyPlacesListFragment : NearbyPlacesFragment() {
     }
 
     override fun showPlaces(places: List<Place>?) {
-        if (places != null) {
+        if (places != null && !places.isEmpty()) {
+            Timber.d("Showing ${places?.size} places")
             this.adapter?.setPlaces(places)
         }
-        Timber.d("Showing ${places?.size} places")
     }
 
     override fun showError(error: String?) {

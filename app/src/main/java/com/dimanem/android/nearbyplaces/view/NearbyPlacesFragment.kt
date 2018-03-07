@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,14 +14,13 @@ import com.dimanem.android.nearbyplaces.entities.Place
 import com.dimanem.android.nearbyplaces.entities.Resource
 import com.dimanem.android.nearbyplaces.entities.Status
 import com.dimanem.android.nearbyplaces.viewmodel.NearbyPlacesViewModel
-import timber.log.Timber
 import javax.inject.Inject
 
 
 /**
  * Created by dimanemets on 06/03/2018.
  */
-abstract class NearbyPlacesFragment: Fragment(), Injectable {
+abstract class NearbyPlacesFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -53,7 +53,15 @@ abstract class NearbyPlacesFragment: Fragment(), Injectable {
     }
 
     override abstract fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View?
-    abstract fun showLoading()
     abstract fun showPlaces(places: List<Place>?)
-    abstract fun showError(error: String?)
+
+    abstract fun showLoading()
+
+    open fun showError(error: String?) {
+        showSnackbar("Failed to load locations with error: $error")
+    }
+
+    fun showSnackbar(text: String) {
+        Snackbar.make(activity.findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT).show()
+    }
 }
